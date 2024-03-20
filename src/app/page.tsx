@@ -4,11 +4,11 @@ import NetworkSwitchButtons from "@/components/NetworkSwitchButtons";
 import TransactionForm from "@/components/TransactionForm";
 import detectEthereumProvider from "@metamask/detect-provider";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Web3 } from "web3";
 
 export default function Home() {
-  const initialState = { accounts: [], balance: "", chainId: "" };
+  const initialState = useMemo(() => ({ accounts: [], balance: "", chainId: "" }), []);
 
   const [hasProvider, setHasProvider] = useState<boolean | null>(null);
   const [wallet, setWallet] = useState(initialState);
@@ -53,7 +53,7 @@ export default function Home() {
       window.ethereum?.removeListener("accountsChanged", refreshAccounts);
       window.ethereum?.removeListener("chainChanged", refreshChain);
     };
-  }, [initialState]);
+  }, [initialState, wallet]);
 
   const updateWallet = async (accounts: any) => {
     const balance = Web3.utils.fromWei(

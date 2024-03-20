@@ -20,17 +20,14 @@ export default function Home() {
 
   useEffect(() => {
     const refreshAccounts = (accounts: any) => {
-      //функция которая проверяет, поменялось что-то после презагрузки страницы или нет
       if (accounts.length > 0) {
         updateWallet(accounts);
       } else {
-        // if length 0, user is disconnected
         setWallet(initialState);
       }
     };
 
     const refreshChain = (chainId: string) => {
-      //функция которая меняет старый chainId на новый
       setWallet((wallet) => ({ ...wallet, chainId }));
     };
 
@@ -40,7 +37,6 @@ export default function Home() {
       setHasProvider(Boolean(provider));
 
       if (provider) {
-        //если установлено, то получаем адрес кошелька и предаем его в refreshAccounts и запускаем слушатель
         const accounts = await window.ethereum.request({
           method: "eth_accounts",
         });
@@ -52,14 +48,12 @@ export default function Home() {
 
     getProvider();
     return () => {
-      //удаляем слушатели
       window.ethereum?.removeListener("accountsChanged", refreshAccounts);
       window.ethereum?.removeListener("chainChanged", refreshChain);
     };
   }, [wallet]);
 
   const updateWallet = async (accounts: any) => {
-    //функция получает адрес кошелька и обновляет useState => wallet
     const balance = Web3.utils.fromWei(
       await window.ethereum!.request({
         method: "eth_getBalance",
@@ -75,13 +69,8 @@ export default function Home() {
   };
 
   const handleConnect = async () => {
-    //функция подключения к кошельку
     setLoading(true);
     setIsConnecting(true);
-    // let accounts = await window.ethereum.request({
-    //   method: "eth_requestAccounts",
-    // });
-    // updateWallet(accounts);
     try {
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
@@ -97,7 +86,6 @@ export default function Home() {
   };
 
   const handleSwitchChain = async (chainId: string) => {
-    //функция смены сети
     await window.ethereum.request({
       method: "wallet_switchEthereumChain",
       params: [{ chainId }],
@@ -105,7 +93,6 @@ export default function Home() {
   };
 
   const updateNetworkData = async (chainId: string) => {
-    //функция обновления данных о кошельке
     await handleSwitchChain(chainId);
     const newChainId = await window.ethereum!.request({
       method: "eth_chainId",
@@ -126,7 +113,6 @@ export default function Home() {
   };
 
   const sendTransaction = async (event: React.FormEvent) => {
-    //функция отправки транзакции
     event.preventDefault();
     let accounts = await window.ethereum.request({
       method: "eth_requestAccounts",

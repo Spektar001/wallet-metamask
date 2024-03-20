@@ -15,3 +15,7 @@ button:disabled {
   cursor: not-allowed;
   opacity: 0.3;
 }
+
+.networkSwitchButtons {
+  @apply flex-1 px-2 py-4 rounded-md text-white font-bold uppercase hover:bg-blue-800 transition-settings;
+}

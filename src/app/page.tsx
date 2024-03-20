@@ -1,8 +1,11 @@
 "use client";
 
+import NetworkSwitchButtons from "@/components/NetworkSwitchButtons";
+import TransactionForm from "@/components/TransactionForm";
 import detectEthereumProvider from "@metamask/detect-provider";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Web3 } from "web3";
-import { useState, useEffect } from "react";
 
 export default function Home() {
   const initialState = { accounts: [], balance: "", chainId: "" };
@@ -50,7 +53,7 @@ export default function Home() {
       window.ethereum?.removeListener("accountsChanged", refreshAccounts);
       window.ethereum?.removeListener("chainChanged", refreshChain);
     };
-  }, [wallet]);
+  }, [initialState]);
 
   const updateWallet = async (accounts: any) => {
     const balance = Web3.utils.fromWei(
@@ -143,9 +146,23 @@ export default function Home() {
 
   return (
     <div className="flex flex-col gap-2 p-5 mt-5 shadow-lg rounded-lg">
-      <h1 className="text-center text-2xl max-[450px]:text-xl font-medium mb-3">
-        Injected Provider {hasProvider ? "DOES" : "DOES NOT"} Exist
-      </h1>
+      <div className="text-center mb-3">
+        <h1 className="text-2xl max-[450px]:text-xl font-medium">
+          Injected Provider {hasProvider ? "DOES" : "DOES NOT"} Exist
+        </h1>
+        {!hasProvider && (
+          <p className="text-lg">
+            Please, install{" "}
+            <Link
+              className="text-xl text-blue-500"
+              href={"https://metamask.io/download/"}
+            >
+              MetaMask
+            </Link>{" "}
+            for your browser
+          </p>
+        )}
+      </div>
       {window.ethereum?.isMetaMask && wallet.accounts.length < 1 && (
         <button
           disabled={disableConnect}
@@ -161,60 +178,16 @@ export default function Home() {
           <h2 className="text-center text-xl font-medium mb-2">
             Change Network
           </h2>
-          <div className="flex flex-wrap gap-3 mb-3 max-[450px]:flex-col">
-            <button
-              onClick={() => {
-                updateNetworkData("0x1");
-              }}
-              className={`${
-                wallet.chainId === "0x1" ? "bg-red-500" : "bg-blue-500"
-              } flex-1 p-2 rounded-md text-white hover:bg-red-500 transition-settings`}
-            >
-              Etherium
-            </button>
-            <button
-              onClick={() => {
-                updateNetworkData("0x38");
-              }}
-              className={`${
-                wallet.chainId === "0x38" ? "bg-red-500" : "bg-blue-500"
-              } flex-1 p-2 rounded-md text-white hover:bg-red-500 transition-settings`}
-            >
-              Binance Smart Chain
-            </button>
-          </div>
+          <NetworkSwitchButtons
+            chainId={wallet.chainId}
+            updateNetworkData={updateNetworkData}
+          />
           <p className="break-all">Address: {wallet.accounts[0]}</p>
           <p>Balance: {parseFloat(wallet.balance)}</p>
           <p>Hex ChainId: {wallet.chainId}</p>
           <p>Numeric ChainId: {Web3.utils.toWei(wallet.chainId, "wei")}</p>
           <hr />
-          <form onSubmit={sendTransaction} className="flex flex-col gap-2">
-            <h2 className="text-center text-xl font-medium">
-              Fast Transaction
-            </h2>
-            <input
-              className="border border-gray-300 p-1 rounded-md"
-              required
-              type="number"
-              placeholder="Amount"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-            />
-            <input
-              className="border border-gray-300 p-1 rounded-md"
-              required
-              type="text"
-              placeholder="Recipient Address"
-              value={recipient}
-              onChange={(e) => setRecipient(e.target.value)}
-            />
-            <button
-              type="submit"
-              className="bg-blue-500 hover:bg-blue-700 transition-settings p-2 rounded-md text-white"
-            >
-              Send Transaction
-            </button>
-          </form>
+          <TransactionForm amount={amount} setAmount={setAmount} recipient={recipient} setRecipient={setRecipient} sendTransaction={sendTransaction} />
         </>
       )}
       {error && (

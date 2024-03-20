@@ -53,7 +53,7 @@ export default function Home() {
       window.ethereum?.removeListener("accountsChanged", refreshAccounts);
       window.ethereum?.removeListener("chainChanged", refreshChain);
     };
-  }, [initialState, wallet]);
+  }, [wallet]);
 
   const updateWallet = async (accounts: any) => {
     const balance = Web3.utils.fromWei(

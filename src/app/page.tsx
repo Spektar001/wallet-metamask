@@ -8,9 +8,9 @@ export default function Home() {
   const initialState = { accounts: [], balance: "", chainId: "" };
 
   const [hasProvider, setHasProvider] = useState<boolean | null>(null);
-  const [wallet, setWallet] = useState(initialState); //данные кошелька: адрес, баланса, chainID...
-  const [recipient, setRecipient] = useState<string>(""); //адрес куда отправить транзакцию
-  const [amount, setAmount] = useState<string>(""); // сколько токенов надо отправить
+  const [wallet, setWallet] = useState(initialState);
+  const [recipient, setRecipient] = useState<string>("");
+  const [amount, setAmount] = useState<string>("");
 
   const [loading, setLoading] = useState(false);
 
@@ -32,7 +32,6 @@ export default function Home() {
     };
 
     const getProvider = async () => {
-      //провеяет установлено ли расшерение в браузере
       const provider = await detectEthereumProvider({ silent: true });
       setHasProvider(Boolean(provider));
 
@@ -140,6 +139,8 @@ export default function Home() {
     setAmount("");
   };
 
+  const disableConnect = Boolean(wallet) && isConnecting;
+
   return (
     <div className="flex flex-col gap-2 p-5 mt-5 shadow-lg rounded-lg">
       <h1 className="text-center text-2xl max-[450px]:text-xl font-medium mb-3">
@@ -147,6 +148,7 @@ export default function Home() {
       </h1>
       {window.ethereum?.isMetaMask && wallet.accounts.length < 1 && (
         <button
+          disabled={disableConnect}
           onClick={handleConnect}
           className="w-1/3 mx-auto bg-blue-500 hover:bg-blue-700 transition-settings p-2 rounded-md text-white"
         >

@@ -10,3 +10,8 @@ input[type="number"]::-webkit-inner-spin-button {
 .transition-settings {
   @apply transition ease-in duration-300;
 }
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
+}

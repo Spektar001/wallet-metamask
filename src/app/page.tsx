@@ -4,11 +4,12 @@ import NetworkSwitchButtons from "@/components/NetworkSwitchButtons";
 import TransactionForm from "@/components/TransactionForm";
 import detectEthereumProvider from "@metamask/detect-provider";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Web3 } from "web3";
+import Loading from "./loading";
 
 export default function Home() {
-  const initialState = useMemo(() => ({ accounts: [], balance: "", chainId: "" }), []);
+  const initialState = { accounts: [], balance: "", chainId: "" };
 
   const [hasProvider, setHasProvider] = useState<boolean | null>(null);
   const [wallet, setWallet] = useState(initialState);
@@ -172,7 +173,7 @@ export default function Home() {
           Connect MetaMask
         </button>
       )}
-      {loading && <p className="text-center">Loading...</p>}
+      {loading && <Loading />}
       {wallet.accounts.length > 0 && (
         <>
           <h2 className="text-center text-xl font-medium mb-2">
@@ -187,7 +188,13 @@ export default function Home() {
           <p>Hex ChainId: {wallet.chainId}</p>
           <p>Numeric ChainId: {Web3.utils.toWei(wallet.chainId, "wei")}</p>
           <hr />
-          <TransactionForm amount={amount} setAmount={setAmount} recipient={recipient} setRecipient={setRecipient} sendTransaction={sendTransaction} />
+          <TransactionForm
+            amount={amount}
+            setAmount={setAmount}
+            recipient={recipient}
+            setRecipient={setRecipient}
+            sendTransaction={sendTransaction}
+          />
         </>
       )}
       {error && (
